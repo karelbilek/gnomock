@@ -130,6 +130,10 @@ func (p *P) healthcheck(ctx context.Context, c *gnomock.Container) (err error) {
 		return fmt.Errorf("can't get version info: %w", err)
 	}
 
+	if _, err := conn.ReadPartitions("gnomock"); err != nil {
+		return fmt.Errorf("can't read partitions: %w", err)
+	}
+
 	if err := conn.CreateTopics(kafka.TopicConfig{
 		Topic:             "gnomock",
 		ReplicationFactor: 1,
