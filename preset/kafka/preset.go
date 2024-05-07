@@ -9,6 +9,7 @@ import (
 	"io"
 	"net/http"
 	"os"
+	"sync"
 	"time"
 
 	"github.com/orlangure/gnomock"
@@ -26,7 +27,8 @@ const (
 
 const (
 	defaultVersion     = "3.3.1-L0"
-	brokerPort         = 49092
+	brokerPortMin      = 49000
+	brokerPortMax      = 49999
 	zookeeperPort      = 2181
 	webPort            = 3030
 	schemaRegistryPort = 8081
@@ -39,6 +41,8 @@ type Message struct {
 	Value string `json:"value"`
 	Time  int64  `json:"time"`
 }
+
+var portMap *sync.Map = &sync.Map{}
 
 func init() {
 	registry.Register("kafka", func() gnomock.Preset { return &P{} })
@@ -60,6 +64,18 @@ func Preset(opts ...Option) gnomock.Preset {
 		opt(p)
 	}
 
+	// this is a little dumb but it works...
+	for i := brokerPortMin; i <= brokerPortMax; i++ {
+		_, loaded := portMap.LoadOrStore(i, true)
+		if !loaded {
+			p.BrokerPort = i
+			break
+		}
+	}
+	if p.BrokerPort == 0 {
+		panic("wrong broker port")
+	}
+
 	return p
 }
 
@@ -70,6 +86,12 @@ type P struct {
 	Messages          []Message `json:"messages"`
 	MessagesFiles     []string  `json:"messages_files"`
 	UseSchemaRegistry bool      `json:"use_schema_registry"`
+
+	BrokerPort int `json:"broker_port"`
+}
+
+func (p *P) FreePort() {
+	portMap.Delete(p.BrokerPort)
 }
 
 // Image returns an image that should be pulled to create this container.
@@ -81,8 +103,8 @@ func (p *P) Image() string {
 func (p *P) Ports() gnomock.NamedPorts {
 	namedPorts := make(gnomock.NamedPorts, 3)
 
-	bp := gnomock.TCP(brokerPort)
-	bp.HostPort = brokerPort
+	bp := gnomock.TCP(p.BrokerPort)
+	bp.HostPort = p.BrokerPort
 	namedPorts[BrokerPort] = bp
 
 	namedPorts[ZooKeeperPort] = gnomock.TCP(zookeeperPort)
@@ -100,7 +122,7 @@ func (p *P) Options() []gnomock.Option {
 		gnomock.WithHealthCheck(p.healthcheck),
 		gnomock.WithEnv("KAFKA_AUTO_CREATE_TOPICS_ENABLE=true"),
 		gnomock.WithEnv("ADV_HOST=127.0.0.1"),
-		gnomock.WithEnv(fmt.Sprintf("BROKER_PORT=%d", brokerPort)),
+		gnomock.WithEnv(fmt.Sprintf("BROKER_PORT=%d", p.BrokerPort)),
 		gnomock.WithEnv("RUNTESTS=0"),
 		gnomock.WithEnv("RUNNING_SAMPLEDATA=0"),
 		gnomock.WithEnv("SAMPLEDATA=0"),
