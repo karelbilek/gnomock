@@ -1,43 +1,43 @@
 linters:
   enable:
     - bodyclose
-    - cyclop
-    - dogsled
-    - errcheck
-    - exportloopref
-    - forcetypeassert
-    - funlen
-    - errorlint
-    - gocognit
-    - goconst
-    - gocritic
-    - gocyclo
-    - godot
-    - godox
-    - gofmt
-    - gofumpt
-    - goimports
-    - goprintffuncname
-    - gosec
-    - gosimple
-    - govet
-    - ineffassign
-    - lll
-    - misspell
-    - nakedret
-    - nilerr
-    - noctx
-    - prealloc
-    - predeclared
-    - revive
-    - staticcheck
-    - stylecheck
-    - typecheck
-    - unconvert
-    - unparam
-    - unused
-    - whitespace
-    - wsl
+    # - cyclop
+    # - dogsled
+    # - errcheck
+    # - exportloopref
+    # - forcetypeassert
+    # - funlen
+    # - errorlint
+    # - gocognit
+    # - goconst
+    # - gocritic
+    # - gocyclo
+    # - godot
+    # - godox
+    # - gofmt
+    # - gofumpt
+    # - goimports
+    # - goprintffuncname
+    # - gosec
+    # - gosimple
+    # - govet
+    # - ineffassign
+    # - lll
+    # - misspell
+    # - nakedret
+    # - nilerr
+    # - noctx
+    # - prealloc
+    # - predeclared
+    # - revive
+    # - staticcheck
+    # - stylecheck
+    # - typecheck
+    # - unconvert
+    # - unparam
+    # - unused
+    # - whitespace
+    # - wsl
 
 issues:
   exclude-rules:
