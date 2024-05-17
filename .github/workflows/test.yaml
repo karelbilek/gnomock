@@ -19,7 +19,7 @@ jobs:
       - name: Get dependencies
         run: go get -v -t -d ./...
       - name: Get golangci-lint
-        run: curl -sfL https://raw.githubusercontent.com/golangci/golangci-lint/master/install.sh| sh -s -- -b $(go env GOPATH)/bin v1.58.1
+        run: curl -sfL https://raw.githubusercontent.com/golangci/golangci-lint/master/install.sh| sh -s -- -b $(go env GOPATH)/bin v1.54.0
       - name: Lint
         run: GL_DEBUG="autogen_exclude,bin_salt,config_reader,exclude_rules,filename_unadjuster,invalid_issue,forbidigo,goenv,linter,linters_context,lintersdb,linters_output,max_from_linter,max_same_issues,pkgcache,runner,severity_rules,severity_rules,source_code,stopwatch,tab_printer,test,text_printer,loader,env,enabled_linters,exec,runner,test,pkgcache" $(go env GOPATH)/bin/golangci-lint run -v --timeout 10m0s ./...
 
